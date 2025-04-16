@@ -35,8 +35,8 @@ fun PinchZoomImageBox(
     Box(Modifier.fillMaxSize())
     {
         contents(
-            PinchZoomableImage(
-                { _, _, _ -> },
+            pinchZoomableImage(
+                { modifier, url, contentScale -> image.invoke(modifier, url, contentScale) },
                 { zoomState = it }) // ZoomableImage 를 contents 에 전달
             , zoomState // PinchZoomState 를 contents 에 전달
         )
@@ -67,8 +67,8 @@ private fun Modifier.offset(offset: Offset): Modifier {
     return this.offset(offsetX, offsetY)
 }
 
-@Composable
-fun PinchZoomableImage(
+
+fun pinchZoomableImage(
     image: ImageType,
     onZoomState: (PinchZoomState) -> Unit = {}
 ): PinchZoomableImageType = { modifier, model, contentScale, originHeight ->
