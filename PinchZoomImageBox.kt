@@ -19,11 +19,14 @@ import androidx.compose.ui.unit.dp
 import com.example.pinchzoom.submodule.pinchzoom.pinchZoomableImage
 
 /**
- * pinch zoom 확대 이미지를 보여주는 Box
- * @param imageLoader 이미지 compose(coil glide 원하는 라이브러리를 [ImageType]에 맞춰 구현)
- * @param contents 박스안에 들어갈 UI. [ZoomableTorangAsyncImage]와 [PinchZoomState]를 contents에 전달함.
+ * ### pinch zoom 이미지를 포함한 Box Layout
  *
- * 주의! ZoomableImage를 사용하여 이미지를 로드해야 함. PinchZoomState로 이미지의 핀치줌 상태를 확인할 수 있음.
+ * imageLoader에 [ImageType]에 맞춰 이미지 로드 컴포넌트 구현 필요.(coil, glide와 같은 라이브러리 사용 가능.)
+ *
+ * 주의! [ZoomableImage]를 사용하여 이미지를 로드해야 함. [PinchZoomState]로 이미지의 핀치줌 상태를 확인할 수 있음.
+ *
+ * @param imageLoader 이미지 로더 compose
+ * @param contents 박스안에 들어갈 contents.
  */
 @Composable
 fun PinchZoomImageBox(
@@ -34,8 +37,8 @@ fun PinchZoomImageBox(
     Box(Modifier.fillMaxSize())
     {
         contents(
-            pinchZoomableImage(imageLoader = imageLoader, onZoomState = { zoomState = it }) // ZoomableImage 를 contents 에 전달
-            , zoomState // PinchZoomState 를 contents 에 전달
+            pinchZoomableImage(imageLoader = imageLoader, onZoomState = { zoomState = it }) // contents 에 ZoomableImage 전달
+            , zoomState // contents 에 PinchZoomState 전달
         )
 
         if (zoomState.isZooming.value) { // 줌 상태면 바깥 이미지 보여 주기
