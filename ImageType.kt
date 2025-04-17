@@ -8,7 +8,7 @@ import androidx.compose.ui.layout.ContentScale
  * 이미지 Type
  * 핀치줌에 사용 이미지 로더 interface
  */
-typealias ImageType = @Composable (
+typealias ImageLoader = @Composable (
     modifier: Modifier,
     url: String,
     contentScale: ContentScale?

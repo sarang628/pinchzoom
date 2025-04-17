@@ -21,7 +21,7 @@ import com.example.pinchzoom.submodule.pinchzoom.pinchZoomableImage
 /**
  * ### pinch zoom 이미지를 포함한 Box Layout
  *
- * imageLoader에 [ImageType]에 맞춰 이미지 로드 컴포넌트 구현 필요.(coil, glide와 같은 라이브러리 사용 가능.)
+ * imageLoader에 [ImageLoader]에 맞춰 이미지 로드 컴포넌트 구현 필요.(coil, glide와 같은 라이브러리 사용 가능.)
  *
  * 주의! [ZoomableImage]를 사용하여 이미지를 로드해야 함. [PinchZoomState]로 이미지의 핀치줌 상태를 확인할 수 있음.
  *
@@ -30,7 +30,7 @@ import com.example.pinchzoom.submodule.pinchzoom.pinchZoomableImage
  */
 @Composable
 fun PinchZoomImageBox(
-    imageLoader: ImageType,
+    imageLoader: ImageLoader,
     contents: @Composable (PinchZoomableImageType, PinchZoomState) -> Unit
 ) {
     var zoomState by remember { mutableStateOf(PinchZoomState()) } // Image 의 pinch 상태를 받기 위한 state
