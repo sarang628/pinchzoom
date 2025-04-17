@@ -5,9 +5,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 
+/**
+ * 핀치줌 이미지 type
+ * @param modifier
+ * @param url
+ * @param contentScale
+ * @param originHeight
+ */
 typealias PinchZoomableImageType = @Composable (
     modifier: Modifier,
-    text: String,
+    url: String,
     contentScale: ContentScale?,
     originHeight: Dp?
 ) -> Unit
