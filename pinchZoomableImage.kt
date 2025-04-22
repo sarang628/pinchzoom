@@ -8,6 +8,7 @@ import com.sarang.torang.di.pinchzoom.ImageLoader
 import com.sarang.torang.di.pinchzoom.PinchZoomState
 import com.sarang.torang.di.pinchzoom.PinchZoomableImageType
 import com.sarang.torang.di.pinchzoom.ZoomSnapshot
+import com.sarang.torang.di.pinchzoom.isZooming
 import com.sarang.torang.di.pinchzoom.pinchZoomAndTransform
 import kotlinx.coroutines.flow.distinctUntilChanged
 
@@ -28,7 +29,7 @@ fun pinchZoomableImage(
             ZoomSnapshot(
                 zoomState.accumulateZoom.value,
                 zoomState.offset.value,
-                zoomState.isZooming.value
+                zoomState.isZooming
             )
         }.distinctUntilChanged()
             .collect {

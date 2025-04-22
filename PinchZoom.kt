@@ -39,12 +39,9 @@ fun Modifier.pinchZoomOverlay(
                                 minZoom,
                                 maxZoom
                             ) // 줌 최대 최소값 설정
-                        if (zoomState.accumulateZoom.value > 1f) { // 줌이 1f 보다 크다면
-                            zoomState.isZooming.value = true // 줌 상태 true
+                        if (zoomState.isZooming) { // 줌이 1f 보다 크다면
                             zoomState.offset.value =
                                 zoomState.offset.value.plus(event.calculatePan()) // 핀치 포인터 이동 값만큼 이미지를 움직이기
-                        } else {
-                            zoomState.isZooming.value = false // 1f 보다 작다면 줌 상태 false
                         }
                     } while (event.changes.any { it.pressed })
 
@@ -92,8 +89,6 @@ suspend fun animateZoomReset(zoomState: PinchZoomState) {
             }
         }
     }
-
-    zoomState.isZooming.value = false
 }
 
 @Composable

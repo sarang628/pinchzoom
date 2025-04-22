@@ -41,7 +41,7 @@ fun PinchZoomImageBox(
             , zoomState // contents 에 PinchZoomState 전달
         )
 
-        if (zoomState.isZooming.value) { // 줌 상태면 바깥 이미지 보여 주기
+        if (zoomState.isZooming) { // 줌 상태면 바깥 이미지 보여 주기
             Box(
                 Modifier
                     .fillMaxSize()
