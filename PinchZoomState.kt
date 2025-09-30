@@ -19,7 +19,13 @@ data class PinchZoomState(
     val offset: MutableState<Offset> = mutableStateOf(Offset(0f, 0f)),
     val url: String = "",
     val originHeight: Float = 0f
-)
+) {
+    fun update(state: PinchZoomState) {
+        topLeftInWindow.value = state.topLeftInWindow.value
+        accumulateZoom.value = state.accumulateZoom.value
+        offset.value = state.offset.value
+    }
+}
 
 /**
  * @param isZooming 줌 동작중 여부

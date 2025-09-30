@@ -28,17 +28,23 @@ import com.example.pinchzoom.submodule.pinchzoom.pinchZoomableImage
  * @param imageLoader 이미지 로더 compose
  * @param contents 박스안에 들어갈 contents.
  */
+
+@Composable
+fun rememberPichZoomState() : PinchZoomState{
+    return PinchZoomState()
+}
+
 @Composable
 fun PinchZoomImageBox(
     imageLoader: ImageLoader,
-    contents: @Composable (PinchZoomableImageType, PinchZoomState) -> Unit
+    zoomState : PinchZoomState = rememberPichZoomState(),
+    contents: @Composable (PinchZoomableImageType/*, PinchZoomState*/) -> Unit
 ) {
-    var zoomState by remember { mutableStateOf(PinchZoomState()) } // Image 의 pinch 상태를 받기 위한 state
+    //var zoomState by remember { mutableStateOf(PinchZoomState()) } // Image 의 pinch 상태를 받기 위한 state
     Box(Modifier.fillMaxSize())
     {
         contents(
-            pinchZoomableImage(imageLoader = imageLoader, onZoomState = { zoomState = it }) // contents 에 ZoomableImage 전달
-            , zoomState // contents 에 PinchZoomState 전달
+            pinchZoomableImage(imageLoader = imageLoader, onZoomState = { zoomState.update(it)}) // contents 에 ZoomableImage 전달
         )
 
         if (zoomState.isZooming) { // 줌 상태면 바깥 이미지 보여 주기
