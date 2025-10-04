@@ -36,15 +36,14 @@ fun rememberPichZoomState() : PinchZoomState{
 
 @Composable
 fun PinchZoomImageBox(
-    imageLoader: ImageLoader,
     zoomState : PinchZoomState = rememberPichZoomState(),
-    contents: @Composable (PinchZoomableImageType/*, PinchZoomState*/) -> Unit
+    contents: @Composable () -> Unit
 ) {
     //var zoomState by remember { mutableStateOf(PinchZoomState()) } // Image 의 pinch 상태를 받기 위한 state
     Box(Modifier.fillMaxSize())
     {
         contents(
-            pinchZoomableImage(imageLoader = imageLoader, onZoomState = { zoomState.update(it)}) // contents 에 ZoomableImage 전달
+            //pinchZoomableImage(onZoomState = { zoomState.update(it)}) // contents 에 ZoomableImage 전달
         )
 
         if (zoomState.isZooming) { // 줌 상태면 바깥 이미지 보여 주기
@@ -53,14 +52,14 @@ fun PinchZoomImageBox(
                     .fillMaxSize()
                     .background(Color.Black.copy(alpha = 0.30f))
             ) {
-                imageLoader.invoke( // 바깥 이미지
+                /*imageLoader.invoke( // 바깥 이미지
                     Modifier
                         .offset(zoomState.topLeftInWindow.value) // 줌 대상 이미지의 화면상 위치와 동일하게 맞추기
                         .height(zoomState.originHeight.dp) // 줌 대상 이미지 높이 동일하게 맞추기
                         .transFormByZoomState(zoomState), // 핀치줌 크기 적용
                     zoomState.url,
                     ContentScale.Crop
-                )
+                )*/
             }
         }
     }

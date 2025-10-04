@@ -1,8 +1,16 @@
 package com.sarang.torang.di.pinchzoom
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocal
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 
 /**
  * 이미지 Type
@@ -13,3 +21,9 @@ typealias ImageLoader = @Composable (
     url: String,
     contentScale: ContentScale?
 ) -> Unit
+
+val LocalImageLoader = compositionLocalOf<ImageLoader>{
+    @Composable { modifier, url, contentScale ->
+
+    }
+}

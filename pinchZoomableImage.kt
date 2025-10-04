@@ -5,6 +5,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.layout.ContentScale
 import com.sarang.torang.di.pinchzoom.ImageLoader
+import com.sarang.torang.di.pinchzoom.LocalImageLoader
 import com.sarang.torang.di.pinchzoom.PinchZoomState
 import com.sarang.torang.di.pinchzoom.PinchZoomableImageType
 import com.sarang.torang.di.pinchzoom.ZoomSnapshot
@@ -13,7 +14,6 @@ import com.sarang.torang.di.pinchzoom.pinchZoomAndTransform
 import kotlinx.coroutines.flow.distinctUntilChanged
 
 fun pinchZoomableImage(
-    imageLoader: ImageLoader,
     onZoomState: (PinchZoomState) -> Unit = {}
 ): PinchZoomableImageType = { modifier, model, contentScale, originHeight ->
     val zoomState =
@@ -37,8 +37,7 @@ fun pinchZoomableImage(
             }
     }
 
-
-    imageLoader.invoke(
+    LocalImageLoader.current.invoke(
         modifier.pinchZoomAndTransform(zoomState),
         model,
         contentScale ?: ContentScale.Fit
