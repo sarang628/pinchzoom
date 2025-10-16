@@ -48,12 +48,14 @@ fun PinchZoomImageBox(
                     .background(Color.Black.copy(alpha = 0.30f))
             ) {
                 imageLoader.invoke( // 바깥 이미지
-                    Modifier
+                    ImageData(
+                    modifier = Modifier
                         .offset(zoomState.topLeftInWindow.value) // 줌 대상 이미지의 화면상 위치와 동일하게 맞추기
                         .height(zoomState.originHeight.dp) // 줌 대상 이미지 높이 동일하게 맞추기
                         .transFormByZoomState(zoomState), // 핀치줌 크기 적용
-                    zoomState.url,
-                    ContentScale.Crop
+                    url = zoomState.url,
+                    contentScale = ContentScale.Crop
+                    )
                 )
             }
         }
