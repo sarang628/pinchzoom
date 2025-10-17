@@ -1,5 +1,6 @@
 package com.sarang.torang.di.pinchzoom
 
+import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -8,12 +9,16 @@ import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.calculatePan
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
+import com.example.pinchzoom.library.pinchzoom.rememberPinchZoomState
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 const val minZoom = 0.5f
@@ -102,7 +107,30 @@ fun Modifier.transFormByZoomState(zoomState: PinchZoomState): Modifier {
 }
 
 @Composable
-fun Modifier.pinchZoomAndTransform(zoomState: PinchZoomState): Modifier {
+fun Modifier.pinchZoomAndTransform(
+    onActiveZoom : (PinchZoomState?) -> Unit = {}
+): Modifier {
+    val zoomState : PinchZoomState = rememberPinchZoomState()
+    // ⑤ 줌 상태 변화 감지 최소화 (snapshotFlow로 batching)
+    LaunchedEffect(Unit) {
+        snapshotFlow { zoomState.isZooming }
+            .distinctUntilChanged() // 변화 있을 때만 collect
+            .collect { isZooming ->
+                if (isZooming) {
+                    Log.d("__zoomState", "onActiveZoom")
+                    onActiveZoom.invoke(zoomState)
+                }
+                else {
+                    Log.d("__zoomState", "deActiveZoom")
+                    onActiveZoom.invoke(null)
+                }
+                /*else if (activeZoomState == zoomState) {
+                    onActiveZoom.invoke(null)
+                    Log.d("__zoomState", "deActiveZoom")
+                }*/
+            }
+    }
+
     return this
         .pinchZoomOverlay(zoomState)
         .transFormByZoomState(zoomState)
