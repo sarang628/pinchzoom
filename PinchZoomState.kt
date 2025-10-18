@@ -4,6 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.geometry.Offset
+import java.util.UUID
 
 /**
  * 줌 상태
@@ -14,12 +15,24 @@ import androidx.compose.ui.geometry.Offset
  * @param originHeight 줌 이미지의 화면상 원래 크기
  */
 data class PinchZoomState(
+    val id: String = UUID.randomUUID().toString(),
     val topLeftInWindow: MutableState<Offset> = mutableStateOf(Offset(0f, 0f)),
     val accumulateZoom: MutableState<Float> = mutableFloatStateOf(1f),
     val offset: MutableState<Offset> = mutableStateOf(Offset(0f, 0f)),
     val url: String = "",
     val originHeight: Float = 0f
-)
+){
+    override fun equals(other: Any?): Boolean {
+
+        if(other is PinchZoomState){
+            return this.id == other.id
+        }
+
+        return super.equals(other)
+    }
+
+    override fun hashCode(): Int = id.hashCode()
+}
 
 /**
  * @param isZooming 줌 동작중 여부

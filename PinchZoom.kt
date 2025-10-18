@@ -13,6 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -35,22 +36,19 @@ fun Modifier.pinchZoomOverlay(
         .pointerInput(Unit) {
             coroutineScope {
                 awaitEachGesture {
-                    awaitFirstDown()
+                    awaitFirstDown()                                                    // 처음 이미지를 터치할 때까지 기다린다.
                     do {
-                        val event = awaitPointerEvent()
-                        zoomState.accumulateZoom.value *= event.calculateZoom() // 줌 누적하기
+                        val event : PointerEvent = awaitPointerEvent()
+                        zoomState.accumulateZoom.value *= event.calculateZoom()         // 줌 누적하기
                         zoomState.accumulateZoom.value =
-                            zoomState.accumulateZoom.value.coerceIn(
-                                minZoom,
-                                maxZoom
-                            ) // 줌 최대 최소값 설정
-                        if (zoomState.isZooming) { // 줌이 1f 보다 크다면
+                            zoomState.accumulateZoom.value.coerceIn(minZoom, maxZoom)   // 줌 최대 최소값 설정
+                        if (zoomState.isZooming) {                                      // 줌이 1f 보다 크다면
                             zoomState.offset.value =
-                                zoomState.offset.value.plus(event.calculatePan()) // 핀치 포인터 이동 값만큼 이미지를 움직이기
+                                zoomState.offset.value.plus(event.calculatePan())       // 핀치 포인터 이동 값만큼 이미지를 움직이기
                         }
-                    } while (event.changes.any { it.pressed })
+                    } while (event.changes.any { it.pressed })                          // 손을 땔 때까지 위 이벤트를 반복
 
-                    launch { // 손을 때면 애니메이션으로 제자리 되돌리기
+                    launch {                                                            // 손을 때면 애니메이션으로 제자리 되돌리기
                         animateZoomReset(zoomState)
                     }
                 }
@@ -59,6 +57,7 @@ fun Modifier.pinchZoomOverlay(
         .onGloballyPositioned { coordinates ->
             val bounds = coordinates.boundsInWindow()
             zoomState.topLeftInWindow.value = bounds.topLeft
+            Log.d("__pinchZoomOverlay", "${bounds.topLeft}")
         }
 }
 
@@ -108,6 +107,7 @@ fun Modifier.transFormByZoomState(zoomState: PinchZoomState): Modifier {
 
 @Composable
 fun Modifier.pinchZoomAndTransform(
+    activeZoomState : PinchZoomState? = null,
     onActiveZoom : (PinchZoomState?) -> Unit = {}
 ): Modifier {
     val zoomState : PinchZoomState = rememberPinchZoomState()
@@ -124,14 +124,21 @@ fun Modifier.pinchZoomAndTransform(
                     Log.d("__zoomState", "deActiveZoom")
                     onActiveZoom.invoke(null)
                 }
-                /*else if (activeZoomState == zoomState) {
+
+                if (activeZoomState == zoomState) {
                     onActiveZoom.invoke(null)
-                    Log.d("__zoomState", "deActiveZoom")
-                }*/
+                    Log.d("__zoomState", "deActiveZoom!")
+                }else{
+                    Log.d("__zoomState", "zoom state different activeZoomState:${activeZoomState?.id}, zoomState:${zoomState.id}")
+                }
             }
     }
 
     return this
         .pinchZoomOverlay(zoomState)
         .transFormByZoomState(zoomState)
+}
+
+fun Boolean.d(tag : String, msg : Any){
+    Log.d(tag, msg.toString())
 }
