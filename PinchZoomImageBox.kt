@@ -82,7 +82,7 @@ fun OverlayImage(
                 parentCoordinates?.windowToLocal(state.topLeftInWindow.value)?.let { localOffset ->
                     imageLoader.invoke( // 바깥 이미지
                         ImageData(
-                            model = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhkYTY17vrtw3-dlooIu9n7R7mYFgOwyiCwEtJiFJTuxk4sOCKJ-OVaftSPKX7CfONCn2AMMV70TNP9qfo5avZBaMBn4BGS5DW6wPlbRY2ZZRgBXMEI5HbzduVdwj790uDattXfmQtkE8JJ_OptUUDFpCdJZWKVO_mOuL408H4svVQlt58TcjQe8JWfC5g/s1600/app-quality-performance-play-console-insights-meta.png",
+                            model = state.url,
                             contentDescription = null,
                             modifier = Modifier
                                 .offset(localOffset)
@@ -104,44 +104,57 @@ private fun Modifier.offset(offset: Offset): Modifier {
     return this.offset(offsetX, offsetY)
 }
 
+// pinch zoom custom image loader
+fun pinchZoomImageLoader(
+    zoomState: PinchZoomState?,
+    onZoomState : (PinchZoomState?)->Unit  ={}
+) : PinchZoomImageLoader = @Composable { data ->
+    AsyncImage(
+        modifier = data.modifier
+            .height(200.dp)
+            .pinchZoomAndTransform(zoomState, onActiveZoom = { onZoomState(it?.copy(url = data.model)) }),
+        model = data.model,
+        contentDescription = data.contentDescription
+    )
+}
 
 @Composable
 fun PinchZoomImageBoxSample(modifier : Modifier = Modifier){
+
+    val imageUrls = listOf(
+        "http://sarang628.iptime.org:89/restaurant_images/278/2025-10-12/07_53_33_425.jpg%3ftype=w800",
+        "http://sarang628.iptime.org:89/restaurant_images/245/2025-10-12/01_18_37_646.jpg",
+        "http://sarang628.iptime.org:89/restaurant_images/244/2025-08-23/11_46_30_054.jpg",
+        "http://sarang628.iptime.org:89/restaurant_images/242/2025-05-03/02_34_45_987.jpeg",
+        "http://sarang628.iptime.org:89/restaurant_images/241/2025-05-03/02_32_41_199.jpeg",
+        "http://sarang628.iptime.org:89/restaurant_images/239/2025-05-03/02_30_21_802.jpg%3fw=500&h=500&org_if_sml=1",
+        "http://sarang628.iptime.org:89/restaurant_images/237/2025-05-03/10_54_53_555.jpg",
+        "http://sarang628.iptime.org:89/restaurant_images/236/2025-05-03/09_33_55_764.jpg"
+    )
 
     // Data shared between a zoomed image and the rest of the list when zooming.
     var zoomState by remember { mutableStateOf<PinchZoomState?>(null) }
 
     Log.d("__PinchZoomImageBoxSample", "recomposition")
 
-    // pinch zoom custom image loader
-    val pinchZoomImageLoader : PinchZoomImageLoader = @Composable {
-        AsyncImage(
-            modifier = it.modifier
-                .height(200.dp)
-                .pinchZoomAndTransform(zoomState) {
-                    zoomState = it // emit active zoom
-                },
-            model = it.model,
-            contentDescription = it.contentDescription
-        )
-    }
-
     PinchZoomImageBox(
-        modifier = modifier,
+        modifier        = modifier,
         activeZoomState = zoomState,
-        imageLoader = imageLoader
+        imageLoader     = imageLoader
     ){
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            // scrollEnabled는 derivedStateOf로 wrapping → recomposition 방지
-            userScrollEnabled = remember(zoomState) { zoomState == null }
+            userScrollEnabled   = remember(zoomState) { zoomState == null } // scrollEnabled는 derivedStateOf로 wrapping → recomposition 방지
         ) {
-            items(10) {
+            items(imageUrls.size) {
                 Column {
                     pinchZoomImageLoader(
+                        zoomState   = zoomState,
+                        onZoomState = { zoomState = it }
+                    ).invoke(
                         PunchZoomImageData(
-                            model = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhkYTY17vrtw3-dlooIu9n7R7mYFgOwyiCwEtJiFJTuxk4sOCKJ-OVaftSPKX7CfONCn2AMMV70TNP9qfo5avZBaMBn4BGS5DW6wPlbRY2ZZRgBXMEI5HbzduVdwj790uDattXfmQtkE8JJ_OptUUDFpCdJZWKVO_mOuL408H4svVQlt58TcjQe8JWfC5g/s1600/app-quality-performance-play-console-insights-meta.png",
-                            contentDescription = null
+                            model               = imageUrls[it],
+                            contentDescription  = null
                         )
                     )
                 }
