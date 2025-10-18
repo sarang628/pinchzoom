@@ -62,7 +62,8 @@ fun PinchZoomImageBox(
 
 @Composable
 fun OverlayImage(
-    imageLoader: ImageLoader, activeZoomState: PinchZoomState? = null,
+    imageLoader: ImageLoader,
+    activeZoomState: PinchZoomState? = null,
     imageSize: Dp
 ) {
     activeZoomState?.let {
@@ -107,17 +108,18 @@ private fun Modifier.offset(offset: Offset): Modifier {
 @Composable
 fun PinchZoomImageBoxSample(modifier : Modifier = Modifier){
 
-    var activeZoomState by remember { mutableStateOf<PinchZoomState?>(null) }
+    // Data shared between a zoomed image and the rest of the list when zooming.
+    var zoomState by remember { mutableStateOf<PinchZoomState?>(null) }
 
     Log.d("__PinchZoomImageBoxSample", "recomposition")
 
-    // emit active zoom
+    // pinch zoom custom image loader
     val pinchZoomImageLoader : PinchZoomImageLoader = @Composable {
         AsyncImage(
             modifier = it.modifier
                 .height(200.dp)
-                .pinchZoomAndTransform(activeZoomState) {
-                    activeZoomState = it
+                .pinchZoomAndTransform(zoomState) {
+                    zoomState = it // emit active zoom
                 },
             model = it.model,
             contentDescription = it.contentDescription
@@ -126,13 +128,13 @@ fun PinchZoomImageBoxSample(modifier : Modifier = Modifier){
 
     PinchZoomImageBox(
         modifier = modifier,
-        activeZoomState = activeZoomState,
+        activeZoomState = zoomState,
         imageLoader = imageLoader
     ){
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            // ④ scrollEnabled는 derivedStateOf로 wrapping → recomposition 방지
-            userScrollEnabled = remember(activeZoomState) { activeZoomState == null }
+            // scrollEnabled는 derivedStateOf로 wrapping → recomposition 방지
+            userScrollEnabled = remember(zoomState) { zoomState == null }
         ) {
             items(10) {
                 Column {
