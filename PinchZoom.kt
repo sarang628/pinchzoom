@@ -57,7 +57,6 @@ fun Modifier.pinchZoomOverlay(
         .onGloballyPositioned { coordinates ->
             val bounds = coordinates.boundsInWindow()
             zoomState.topLeftInWindow.value = bounds.topLeft
-            Log.d("__pinchZoomOverlay", "${bounds.topLeft}")
         }
 }
 
@@ -117,19 +116,14 @@ fun Modifier.pinchZoomAndTransform(
             .distinctUntilChanged() // 변화 있을 때만 collect
             .collect { isZooming ->
                 if (isZooming) {
-                    Log.d("__zoomState", "onActiveZoom")
                     onActiveZoom.invoke(zoomState)
                 }
                 else {
-                    Log.d("__zoomState", "deActiveZoom")
                     onActiveZoom.invoke(null)
                 }
 
                 if (activeZoomState == zoomState) {
                     onActiveZoom.invoke(null)
-                    Log.d("__zoomState", "deActiveZoom!")
-                }else{
-                    Log.d("__zoomState", "zoom state different activeZoomState:${activeZoomState?.id}, zoomState:${zoomState.id}")
                 }
             }
     }
