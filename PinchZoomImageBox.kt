@@ -56,20 +56,21 @@ fun PinchZoomImageBox(
         OverlayImage(
             imageLoader = imageLoader,
             activeZoomState = currentZoomState,
-            imageSize = imageSize
+            imageSize = imageSize,
+            showLog = showLog
         )
     }
 }
 
 @Composable
 fun OverlayImage(
+    tag             : String                    = "__OverlayImage",
     imageLoader     : ImageLoader,
     activeZoomState : PinchZoomState?           = null,
     imageSize       : Dp                        = 0.dp,
     showLog         : Boolean                   = false
 ) {
     activeZoomState?.let {
-
         //TODO:: innerpadding 보정 어떻게 계산하는지 분석
         var parentCoordinates: LayoutCoordinates? by remember { mutableStateOf(null) } // scaffold inner padding 보정
 
@@ -79,12 +80,12 @@ fun OverlayImage(
                 .background(Color.Black.copy(alpha = 0.30f))
                 .onGloballyPositioned { parentCoordinates = it } // 부모 Box 좌표
         ) {
-            activeZoomState.let { state ->
+                showLog.d(tag, "activeZoomState : $activeZoomState")
                 //TODO:: innerpadding 보정 어떻게 계산하는지 분석
-                parentCoordinates?.windowToLocal(state.topLeftInWindow.value)?.let { localOffset ->
+                parentCoordinates?.windowToLocal(it.topLeftInWindow.value)?.let { localOffset ->
                     imageLoader.invoke( // 바깥 이미지
                         ImageData(
-                            model = state.url,
+                            model = it.url,
                             contentDescription = null,
                             modifier = Modifier
                                 .offset(localOffset)
@@ -94,8 +95,6 @@ fun OverlayImage(
                     )
                 }
             }
-
-        }
     }
 }
 
@@ -117,7 +116,7 @@ fun pinchZoomImageLoader(
         modifier = data.modifier
             .height(200.dp)
             .pinchZoomAndTransform(zoomState, onActiveZoom = {
-                showLog.d(tag, "onAciveZoom : $data")
+                showLog.d(tag, if(it != null) "onAciveZoom : $it" else "deActiveZoom")
                 onZoomState(it?.copy(url = data.model)) }
             ),
         model = data.model,
@@ -149,7 +148,8 @@ fun PinchZoomImageBoxSample(modifier : Modifier = Modifier, showLog: Boolean = f
     PinchZoomImageBox(
         modifier        = modifier,
         activeZoomState = zoomState,
-        imageLoader     = imageLoader
+        imageLoader     = imageLoader,
+        showLog         = showLog
     ){
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp),
