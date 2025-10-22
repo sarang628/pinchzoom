@@ -110,7 +110,8 @@ fun pinchZoomImageLoader(
     AsyncImage(
         modifier = data.modifier
             .pinchZoomAndTransform(zoomState, onActiveZoom = {
-                showLog.d(tag, if(it != null) "onAciveZoom : $it" else "deActiveZoom")
+                if(it != null)
+                    showLog.d(tag, "onAciveZoom : leftTop : ${it.topLeftInWindow.value}, height: ${it.originHeight}")
                 onZoomState(it?.copy(url = data.model)) }
             )
         ,
