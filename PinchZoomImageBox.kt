@@ -48,7 +48,7 @@ fun PinchZoomImageBox(
     // ② rememberUpdatedState로 overlay scope만 최신값 반영
     val currentZoomState by rememberUpdatedState(activeZoomState)
     // ③ Log는 recomposition이 실제로 일어나는 곳에서만 확인
-    LaunchedEffect(Unit) { Log.d(tag, "composition created once") }
+    LaunchedEffect(Unit) { showLog.d(tag, "composition created once") }
 
     Box(modifier) {
         content()
