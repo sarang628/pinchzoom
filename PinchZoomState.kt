@@ -4,6 +4,8 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import java.util.UUID
 
 /**
@@ -20,7 +22,7 @@ data class PinchZoomState(
     val accumulateZoom: MutableState<Float> = mutableFloatStateOf(1f),
     val offset: MutableState<Offset> = mutableStateOf(Offset(0f, 0f)),
     val url: String = "",
-    val originHeight: Float = 0f
+    val originHeight: Dp = 0.dp
 ){
     override fun equals(other: Any?): Boolean {
 

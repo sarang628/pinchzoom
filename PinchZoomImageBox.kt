@@ -1,6 +1,5 @@
 package com.sarang.torang.di.pinchzoom
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,11 +21,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.pinchzoom.submodule.pinchzoom.PinchZoomImageLoader
-import com.example.pinchzoom.submodule.pinchzoom.PunchZoomImageData
+import com.example.pinchzoom.submodule.pinchzoom.PinchZoomImageData
 
 /**
  * ### pinch zoom 이미지를 포함한 Box Layout
@@ -44,7 +42,6 @@ fun PinchZoomImageBox(
     content         : @Composable () -> Unit    = {}
 ) {
     val tag = "__PinchZoomExample"
-    val imageSize = 200.dp
     // ② rememberUpdatedState로 overlay scope만 최신값 반영
     val currentZoomState by rememberUpdatedState(activeZoomState)
     // ③ Log는 recomposition이 실제로 일어나는 곳에서만 확인
@@ -56,7 +53,6 @@ fun PinchZoomImageBox(
         OverlayImage(
             imageLoader = imageLoader,
             activeZoomState = currentZoomState,
-            imageSize = imageSize,
             showLog = showLog
         )
     }
@@ -67,7 +63,6 @@ fun OverlayImage(
     tag             : String                    = "__OverlayImage",
     imageLoader     : ImageLoader,
     activeZoomState : PinchZoomState?           = null,
-    imageSize       : Dp                        = 0.dp,
     showLog         : Boolean                   = false
 ) {
     activeZoomState?.let {
@@ -89,7 +84,7 @@ fun OverlayImage(
                             contentDescription = null,
                             modifier = Modifier
                                 .offset(localOffset)
-                                .height(imageSize)
+                                .height(it.originHeight)
                                 .transFormByZoomState(it)
                         )
                     )
@@ -114,13 +109,14 @@ fun pinchZoomImageLoader(
 ) : PinchZoomImageLoader = @Composable { data ->
     AsyncImage(
         modifier = data.modifier
-            .height(200.dp)
             .pinchZoomAndTransform(zoomState, onActiveZoom = {
                 showLog.d(tag, if(it != null) "onAciveZoom : $it" else "deActiveZoom")
                 onZoomState(it?.copy(url = data.model)) }
-            ),
+            )
+        ,
         model = data.model,
-        contentDescription = data.contentDescription
+        contentDescription = data.contentDescription,
+        contentScale = data.contentScale
     )
 }
 
@@ -165,7 +161,7 @@ fun PinchZoomImageBoxSample(modifier : Modifier = Modifier, showLog: Boolean = f
                             zoomState = it
                         }
                     ).invoke(
-                        PunchZoomImageData(
+                        PinchZoomImageData(
                             model               = imageUrls[it],
                             contentDescription  = null
                         )
