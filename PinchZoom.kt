@@ -134,5 +134,5 @@ fun Modifier.pinchZoomAndTransform(
 }
 
 fun Boolean.d(tag : String, msg : Any){
-    Log.d(tag, msg.toString())
+    if(this) Log.d(tag, msg.toString())
 }

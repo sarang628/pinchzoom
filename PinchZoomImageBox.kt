@@ -37,10 +37,11 @@ import com.example.pinchzoom.submodule.pinchzoom.PunchZoomImageData
  */
 @Composable
 fun PinchZoomImageBox(
-    modifier : Modifier = Modifier,
-    imageLoader: ImageLoader,
-    activeZoomState: PinchZoomState? = null,
-    content : @Composable () -> Unit = {}
+    modifier        : Modifier                  = Modifier,
+    showLog         : Boolean                   = false,
+    imageLoader     : ImageLoader,
+    activeZoomState : PinchZoomState?           = null,
+    content         : @Composable () -> Unit    = {}
 ) {
     val tag = "__PinchZoomExample"
     val imageSize = 200.dp
@@ -62,9 +63,10 @@ fun PinchZoomImageBox(
 
 @Composable
 fun OverlayImage(
-    imageLoader: ImageLoader,
-    activeZoomState: PinchZoomState? = null,
-    imageSize: Dp
+    imageLoader     : ImageLoader,
+    activeZoomState : PinchZoomState?           = null,
+    imageSize       : Dp                        = 0.dp,
+    showLog         : Boolean                   = false
 ) {
     activeZoomState?.let {
 
@@ -106,20 +108,27 @@ private fun Modifier.offset(offset: Offset): Modifier {
 
 // pinch zoom custom image loader
 fun pinchZoomImageLoader(
-    zoomState: PinchZoomState?,
+    zoomState   : PinchZoomState?,
+    tag         : String = "__pinchZoomImageLoader",
+    showLog     : Boolean = false,
     onZoomState : (PinchZoomState?)->Unit  ={}
 ) : PinchZoomImageLoader = @Composable { data ->
     AsyncImage(
         modifier = data.modifier
             .height(200.dp)
-            .pinchZoomAndTransform(zoomState, onActiveZoom = { onZoomState(it?.copy(url = data.model)) }),
+            .pinchZoomAndTransform(zoomState, onActiveZoom = {
+                showLog.d(tag, "onAciveZoom : $data")
+                onZoomState(it?.copy(url = data.model)) }
+            ),
         model = data.model,
         contentDescription = data.contentDescription
     )
 }
 
 @Composable
-fun PinchZoomImageBoxSample(modifier : Modifier = Modifier){
+fun PinchZoomImageBoxSample(modifier : Modifier = Modifier, showLog: Boolean = false){
+
+    val tag = "__PinchZoomImageBoxSample"
 
     val imageUrls = listOf(
         "http://sarang628.iptime.org:89/restaurant_images/278/2025-10-12/07_53_33_425.jpg%3ftype=w800",
@@ -135,7 +144,7 @@ fun PinchZoomImageBoxSample(modifier : Modifier = Modifier){
     // Data shared between a zoomed image and the rest of the list when zooming.
     var zoomState by remember { mutableStateOf<PinchZoomState?>(null) }
 
-    Log.d("__PinchZoomImageBoxSample", "recomposition")
+    showLog.d(tag, "recomposition")
 
     PinchZoomImageBox(
         modifier        = modifier,
@@ -150,6 +159,7 @@ fun PinchZoomImageBoxSample(modifier : Modifier = Modifier){
                 Column {
                     pinchZoomImageLoader(
                         zoomState   = zoomState,
+                        showLog     =  true,
                         onZoomState = { zoomState = it }
                     ).invoke(
                         PunchZoomImageData(
