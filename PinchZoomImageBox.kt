@@ -160,7 +160,10 @@ fun PinchZoomImageBoxSample(modifier : Modifier = Modifier, showLog: Boolean = f
                     pinchZoomImageLoader(
                         zoomState   = zoomState,
                         showLog     =  true,
-                        onZoomState = { zoomState = it }
+                        onZoomState = {
+                            showLog.d(tag, "onZoomState $it")
+                            zoomState = it
+                        }
                     ).invoke(
                         PunchZoomImageData(
                             model               = imageUrls[it],
