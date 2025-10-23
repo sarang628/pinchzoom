@@ -75,7 +75,6 @@ fun OverlayImage(
                 .background(Color.Black.copy(alpha = 0.30f))
                 .onGloballyPositioned { parentCoordinates = it } // 부모 Box 좌표
         ) {
-                showLog.d(tag, "activeZoomState : $activeZoomState")
                 //TODO:: innerpadding 보정 어떻게 계산하는지 분석
                 parentCoordinates?.windowToLocal(it.topLeftInWindow.value)?.let { localOffset ->
                     imageLoader.invoke( // 바깥 이미지
