@@ -25,6 +25,7 @@ val imageLoader : ImageLoader = @Composable {
     AsyncImage(
         modifier = it.modifier,
         model = it.model,
+        contentScale = it.contentScale,
         contentDescription = it.contentDescription
     )
 }
