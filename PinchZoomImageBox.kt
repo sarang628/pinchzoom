@@ -1,5 +1,6 @@
 package com.sarang.torang.di.pinchzoom
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,10 +40,11 @@ import com.example.pinchzoom.submodule.pinchzoom.PinchZoomImageData
 @Composable
 fun PinchZoomImageBox(
     modifier        : Modifier                  = Modifier,
+    tag             : String                    = "__PinchZoomImageBox",
     showLog         : Boolean                   = false,
     imageLoader     : ImageLoader,
     activeZoomState : PinchZoomState?           = null,
-    content         : @Composable () -> Unit    = {}
+    content         : @Composable () -> Unit    = { Log.i(tag, "content does not set") }
 ) {
     val tag = "__PinchZoomExample"
     // ② rememberUpdatedState로 overlay scope만 최신값 반영
