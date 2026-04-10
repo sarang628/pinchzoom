@@ -1,5 +1,6 @@
 package com.sarang.torang.di.pinchzoom
 
+import TorangAsyncImage
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -132,14 +134,9 @@ fun pinchZoomImageLoader(
     showLog     : Boolean = false,
     onZoomState : (PinchZoomState?)->Unit  ={}
 ) : PinchZoomImageLoader = @Composable { data ->
-    AsyncImage(
+    TorangAsyncImage(
         modifier = data.modifier
             .pinchZoomAndTransform(zoomState, onActiveZoom = {
-                if (it != null)
-                    showLog.d(
-                        tag,
-                        "onAciveZoom : leftTop : ${it.topLeftInWindow.value}, height: ${it.originHeight}"
-                    )
                 onZoomState(it?.copy(url = data.model))
             }
             )
